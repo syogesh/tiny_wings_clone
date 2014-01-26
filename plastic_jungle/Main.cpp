@@ -57,21 +57,18 @@ int main (int argc, char* args[]) {
 
 			game.heroEventHandler(event);
 		}
-		//game.background.setSelfAsRenderTarget();
 
-		//SDL_SetRenderDrawColor(mainRenderer, 0xFF, 0x42, 0x00, 0xFF);
+		//Clear Screen
 		SDL_RenderClear(mainRenderer);
+
 		game.displayBackground();
 		game.drawTerrain();
 		game.movementSystem();
 		game.animationSystem();
-		SDL_RenderPresent(mainRenderer);
 		game.centerCamera(camera);
 
-
-		
-		//SDL_RenderFillRect(mainRenderer, &screen);
-
+		//Present renders to screen
+		SDL_RenderPresent(mainRenderer);
 		
 	}
 

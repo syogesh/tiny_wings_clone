@@ -66,9 +66,9 @@ bool Texture::loadBlank(int w, int h)
 bool Texture::loadRandomColor()
 {
 	destroy();
-	int red = ((rand() % 256) + 2*0xFF)/3;
-	int green = ((rand() % 256) + 2*0xFF)/3;
-	int blue = ((rand() % 256) + 2*0xFF)/3;
+	int red = (rand() % 128) + 127;
+	int green = (rand() % 128) + 127;
+	int blue = (rand() % 128) + 127;
 
 	SDL_Texture* newTexture = NULL;
 	SDL_Surface* tempSurface = IMG_Load("images/blank.png");

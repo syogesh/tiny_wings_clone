@@ -8,10 +8,11 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <deque>
 
 const int MAX_ENTITIES = 50;
 const int MAX_HILLS = 100;
-const int HILL_WIDTH = 10;
+const int HILL_SEGMENT_WIDTH = 4;
 
 const int SCREEN_HEIGHT = 480;
 const int SCREEN_WIDTH = 640;

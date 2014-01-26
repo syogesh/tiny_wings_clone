@@ -11,6 +11,7 @@ Game::Game()
 	componentVelocities.resize(MAX_ENTITIES);
 	componentSprites.resize(MAX_ENTITIES);
 	componentPositions.resize(MAX_ENTITIES);
+
 	for (auto i : componentMasks)
 	{
 		i = COMPONENT_NONE;
@@ -19,6 +20,9 @@ Game::Game()
 	heroNum = 0;
 	scrollX = 0;
 	scrollY = 0;
+
+	heroWidth = 20;
+	heroHeight = 20;
 
 	leftRender = 2;
 	rightRender = 7;
@@ -117,7 +121,6 @@ void Game::destruct()
 
 void Game::displayBackground()
 {
-	//scrollX = camera.x;
 	if (scrollX > SCREEN_WIDTH) {
 		scrollX = 0;
 	}
@@ -157,7 +160,7 @@ void Game::drawTerrain()
 		one = (*(points + i - 1));
 		two = (*(points + i));
 
-		hillSegments = floorf((float)(two.x - one.x)/HILL_WIDTH);
+		hillSegments = floorf((float)(two.x - one.x)/HILL_SEGMENT_WIDTH);
 
 		dX = (two.x - one.x)/hillSegments;
 		dAngle = 3.14159/hillSegments;
@@ -165,7 +168,7 @@ void Game::drawTerrain()
 		amplitude = (one.y - two.y)/2;
 
 		x = one;
-		for (int j = 0; j < hillSegments + 1; ++j)
+		for (int j = 0; j < hillSegments + 2; ++j)
 		{
 			y.x = one.x + j*dX;
 			y.y = yMiddle + amplitude * cosf(dAngle*j);
@@ -184,19 +187,36 @@ void Game::drawTerrain()
 			backgroundNoise.render(x.x - camera.x, x.y - camera.y, &srcRect);
 
 			x = y;
+
+			srcRect.x += camera.x;
+			srcRect.y += camera.y;
+
+			if (x.x < componentPositions[heroNum].x + 30
+				&& x.x > componentPositions[heroNum].x - 30)
+			{
+				hillRects.push_front(srcRect);
+				//cout << srcRect.x << endl;
+			}
 		}
+	}
 
-		y.x = one.x + (hillSegments+2)*dX;
-		y.y = yMiddle + amplitude * cosf(dAngle*(hillSegments+2));
+	destroyHills();
+	/*
+	if (!hillRects.empty())
+	{
+		cout << hillRects.front().x << ", "; 
+		cout << componentPositions[heroNum].x;
+		cout << ", " << hillRects.back().x << ", ";
+		cout << hillRects.size() << endl;
+	}
+	*/
+}
 
-		srcRect.x = x.x - camera.x;
-		srcRect.y = x.y - camera.y;
-		srcRect.h = SCREEN_HEIGHT;
-		srcRect.w = dX;
-
-		hillTexture.render(x.x - camera.x, x.y - camera.y, &srcRect);
-		backgroundNoise.setAlpha(45);
-		backgroundNoise.render(x.x - camera.x, x.y - camera.y, &srcRect);
+void Game::destroyHills()
+{
+	while (hillRects.back().x < componentPositions[heroNum].x - 30)
+	{
+		hillRects.pop_back();
 	}
 }
 
@@ -301,6 +321,9 @@ void Game::movementSystem()
 		}
 		*/
 	}
+
+	//cout << componentPositions[heroNum].x << ", " << componentPositions[heroNum].y << endl;
+	collisionDetection();
 }
 
 void Game::animationSystem()
@@ -361,4 +384,22 @@ void Game::centerCamera(SDL_Rect& camera)
 	cout << ", " << scrollX << ", " << scrollY;
 	cout << ", " << leftRender << ", " << rightRender << endl;
 */
+}
+
+void Game::collisionDetection()
+{
+	for (int i = 0; i < hillRects.size(); ++i)
+	{
+		if (componentPositions[heroNum].x > hillRects[i].x
+			&& componentPositions[heroNum].x < hillRects[i].x + hillRects[i].w)
+		{
+			if (componentPositions[heroNum].y + heroHeight > hillRects[i].y)
+			{
+				//cout << componentPositions[heroNum].y << ", ";
+				//cout << hillRects[i].y << endl;
+				componentPositions[heroNum].y -= 
+					(componentPositions[heroNum].y + heroHeight - hillRects[i].y);
+			}
+		}
+	}
 }

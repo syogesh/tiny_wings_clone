@@ -33,6 +33,7 @@ public:
 	void gravitySystem();
 	void centerCamera(SDL_Rect& camera);
 
+	void collisionDetection();
 
 
 private:
@@ -46,7 +47,12 @@ private:
 	std::vector<Velocity> componentVelocities;
 	std::vector<Sprite> componentSprites;
 
+	std::deque<SDL_Rect> hillRects;
+
 	int heroNum;
+
+	int heroWidth;
+	int heroHeight;
 
 	int scrollX;
 	int scrollY;
@@ -54,6 +60,9 @@ private:
 	Terrain terrain;
 	int leftRender;
 	int rightRender;
+
+	void destroyHills();
+
 
 };
 
