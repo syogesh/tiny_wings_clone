@@ -20,8 +20,8 @@ Game::Game()
 	scrollX = 0;
 	scrollY = 0;
 
-	leftRender = 0;
-	rightRender = 5;
+	leftRender = 2;
+	rightRender = 7;
 
 }
 
@@ -87,6 +87,12 @@ bool Game::loadMedia()
 		return false;
 	}
 
+	if (!hillTexture.loadRandomColor())
+	{
+		cout << "Couldn't load hill texture\n";
+		return false;
+	}
+
 	return true;
 }
 
@@ -130,10 +136,14 @@ void Game::displayBackground()
 void Game::drawTerrain()
 {
 	SDL_Point* points = terrain.getPoints();
-	int x1 = 0;
-	int y1 = 0;
-	int x2 = 0;
-	int y2 = 0;
+	float x1 = 0;
+	float y1 = 0;
+	float x2 = 0;
+	float y2 = 0;
+	SDL_Point one, two, x, y;
+	int hillSegments;
+	float dX, dAngle, yMiddle, amplitude;
+	SDL_Rect srcRect;
 
 	for (int i = leftRender; i < rightRender; ++i)
 	{
@@ -142,7 +152,51 @@ void Game::drawTerrain()
 		x2 = (*(points + i)).x - camera.x;
 		y2 = (*(points + i)).y - camera.y;
 
-		SDL_RenderDrawLine(mainRenderer, x1, y1, x2, y2);
+		//SDL_RenderDrawLine(mainRenderer, x1, y1, x2, y2);
+
+		one = (*(points + i - 1));
+		two = (*(points + i));
+
+		hillSegments = floorf((float)(two.x - one.x)/HILL_WIDTH);
+
+		dX = (two.x - one.x)/hillSegments;
+		dAngle = 3.14159/hillSegments;
+		yMiddle = (one.y + two.y)/2;
+		amplitude = (one.y - two.y)/2;
+
+		x = one;
+		for (int j = 0; j < hillSegments + 1; ++j)
+		{
+			y.x = one.x + j*dX;
+			y.y = yMiddle + amplitude * cosf(dAngle*j);
+
+			//SDL_RenderDrawLine(mainRenderer, x.x - camera.x, 
+			//	x.y - camera.y, y.x - camera.x, 
+			//	y.y - camera.y);
+
+			srcRect.x = x.x - camera.x;
+			srcRect.y = x.y - camera.y;
+			srcRect.h = SCREEN_HEIGHT;
+			srcRect.w = dX;
+
+			hillTexture.render(x.x - camera.x, x.y - camera.y, &srcRect);
+			backgroundNoise.setAlpha(45);
+			backgroundNoise.render(x.x - camera.x, x.y - camera.y, &srcRect);
+
+			x = y;
+		}
+
+		y.x = one.x + (hillSegments+2)*dX;
+		y.y = yMiddle + amplitude * cosf(dAngle*(hillSegments+2));
+
+		srcRect.x = x.x - camera.x;
+		srcRect.y = x.y - camera.y;
+		srcRect.h = SCREEN_HEIGHT;
+		srcRect.w = dX;
+
+		hillTexture.render(x.x - camera.x, x.y - camera.y, &srcRect);
+		backgroundNoise.setAlpha(45);
+		backgroundNoise.render(x.x - camera.x, x.y - camera.y, &srcRect);
 	}
 }
 

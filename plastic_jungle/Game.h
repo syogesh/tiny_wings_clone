@@ -39,6 +39,7 @@ private:
 
 	Texture background;
 	Texture backgroundNoise;
+	Texture hillTexture;
 
 	std::vector<int> componentMasks;
 	std::vector<Position> componentPositions;

@@ -8,21 +8,6 @@ Terrain::Terrain()
 
 void Terrain::generateHills()
 {
-	/*
-	int x = 0;
-	int y = SCREEN_HEIGHT / 2;
-	SDL_Point tempPoint;
-
-	for (int i = 0; i < MAX_HILLS; ++i)
-	{
-		tempPoint.x = x;
-		tempPoint.y = y;
-		point[i] = tempPoint;
-		x += SCREEN_WIDTH/2;
-		y = rand() % SCREEN_HEIGHT;
-	}*/
-
-
 	//sergey implementation
 	int minDx = 160;
 	int minDy = 20;
@@ -38,7 +23,7 @@ void Terrain::generateHills()
 	int paddingBottom = 20;
 
 	SDL_Point tempPoint;
-	tempPoint.x = 0;
+	tempPoint.x = 1;
 	tempPoint.y = SCREEN_HEIGHT/2;
 	point[0] = tempPoint;
 
@@ -58,6 +43,8 @@ void Terrain::generateHills()
 		sign *= -1;
 		point[i] = tempPoint;
 	}
+
+	
 }
 
 SDL_Point* Terrain::getPoints()
