@@ -2,7 +2,7 @@ A simple clone of the iPhone game Tiny Wings made with SDL
 
 Things to do:
 
-1. Make hills curved
+1. Make hills curved (DONE!) (almost)
 2. Implement collision detection for hills
 3. Implement using spacebar to increase gravity
 4. Slow down !
